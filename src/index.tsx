@@ -32,7 +32,7 @@ const GameBase: FC<Props> = ({ children }) => {
         projection: 'EPSG:3857',
         tileGrid: mapTileGrid,
         tilePixelRatio: 1,
-        url: '/tiles/{z}/{x}/{y}.jpg',
+        url: './tiles/{z}/{x}/{y}.jpg',
       }),
     });
 
