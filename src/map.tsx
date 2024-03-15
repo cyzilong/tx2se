@@ -1,16 +1,16 @@
-import Map from 'ol/Map';
-import Vector from 'ol/layer/Vector';
 import { Feature, Overlay } from 'ol';
-import * as source from 'ol/source';
-import * as geom from 'ol/geom';
-import * as style from 'ol/style';
-import * as interaction from 'ol/interaction';
+import Map from 'ol/Map';
 import * as condition from 'ol/events/condition';
+import * as geom from 'ol/geom';
+import * as interaction from 'ol/interaction';
 import Layer from 'ol/layer/Layer';
+import Vector from 'ol/layer/Vector';
 import LayerRenderer from 'ol/renderer/Layer';
-import { findParentWithClass, stringifyPoint } from './utils';
+import * as source from 'ol/source';
+import * as style from 'ol/style';
 import { cfg, icons } from './config';
 import { MarkRes } from './config/static';
+import { findParentWithClass, stringifyPoint } from './utils';
 
 export class Marker {
   map: Map;
@@ -21,6 +21,14 @@ export class Marker {
     this.initTooltip();
   }
   initTooltip() {
+    window.load = function () {
+      const $el = document.querySelectorAll('.mark.thin');
+      const result = [];
+      for (let i = 0; i < $el.length; i++) {
+        result.push($el[i].getAttribute('data-string'));
+      }
+      console.log(result.join('\n'));
+    };
     const tooltip = document.createElement('div');
     tooltip.className = 'tooltip';
     this.tooltip = new Overlay({
@@ -47,7 +55,6 @@ export class Marker {
           $tooltip.style.fontSize = `${width / 2}px`;
         }
       });
-      console.log(this.tooltip!.getElement());
     };
     this.map.getView().on('change:resolution', resolutionChangeFn);
     setTimeout(() => {
@@ -120,6 +127,10 @@ export class Marker {
       const tooltipEl = this.createTooltipEl(coordinate, type, remark);
       markEl.appendChild(tooltipEl);
       markEl.classList.add('glow');
+      markEl.setAttribute(
+        'data-string',
+        `箱子 ${stringifyPoint(coordinate as [number, number]).join('，')}`
+      );
       markEl.addEventListener('click', () => {
         const classList = markEl.classList;
         if (classList.contains('thin')) {
